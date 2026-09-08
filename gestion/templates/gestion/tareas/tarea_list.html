@@ -1,0 +1,91 @@
+{% extends "gestion/base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="section-label">Mis tareas</span>
+    <a href="{% url 'tarea_create' %}" class="btn-gradient">+ Nueva tarea</a>
+</div>
+
+{% if tareas %}
+
+    <!-- uso una tabla en vez de tarjetas, porque las tareas tienen más columnas de datos que comparar de un vistazo -->
+    <div class="table-glass-wrap">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Proyecto</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tarea in tareas %}
+                    <tr>
+                        <td class="fw-semibold">{{ tarea.titulo }}</td>
+
+                        <!-- tarea.proyecto trae el objeto Proyecto relacionado, y __str__ nos devuelve su nombre -->
+                        <td style="color: var(--muted);">{{ tarea.proyecto }}</td>
+
+                        <td>
+                            <!-- comparo el valor guardado (PEN, PRO, COM) para pintar cada badge de un color distinto -->
+                            {% if tarea.estado == 'PEN' %}
+                                <span class="badge-grad badge-grad-slate">{{ tarea.get_estado_display }}</span>
+                            {% elif tarea.estado == 'PRO' %}
+                                <span class="badge-grad badge-grad-indigo">{{ tarea.get_estado_display }}</span>
+                            {% else %}
+                                <span class="badge-grad badge-grad-green">{{ tarea.get_estado_display }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <!-- mismo patrón para prioridad, pero con colores que representen urgencia -->
+                            {% if tarea.prioridad == 'BAJ' %}
+                                <span class="badge-grad badge-grad-light">{{ tarea.get_prioridad_display }}</span>
+                            {% elif tarea.prioridad == 'MED' %}
+                                <span class="badge-grad badge-grad-amber">{{ tarea.get_prioridad_display }}</span>
+                            {% else %}
+                                <span class="badge-grad badge-grad-pink">{{ tarea.get_prioridad_display }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end">
+                            <a href="{% url 'tarea_update' tarea.pk %}" class="btn-soft btn-sm">Editar</a>
+                            <a href="{% url 'tarea_delete' tarea.pk %}" class="btn-soft-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- controles de paginación: solo se muestran si hay más de una página -->
+    {% if is_paginated %}
+        <nav class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn-soft btn-sm">&larr; Anterior</a>
+                {% endif %}
+            </div>
+            <span class="small" style="color: var(--muted-2);">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            <div>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn-soft btn-sm">Siguiente &rarr;</a>
+                {% endif %}
+            </div>
+        </nav>
+    {% endif %}
+
+{% else %}
+
+    <div class="alert-glass p-4">
+        Todavía no tienes tareas creadas. ¡Crea la primera con el botón de arriba!
+    </div>
+
+{% endif %}
+
+{% endblock %}

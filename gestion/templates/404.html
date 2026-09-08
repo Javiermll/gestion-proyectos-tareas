@@ -1,0 +1,15 @@
+{% extends "gestion/base.html" %}
+
+{% block content %}
+
+<!-- Django busca este archivo automáticamente cuando DEBUG=False y no encuentra ninguna URL -->
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 55vh;">
+    <div class="error-code mb-2">404</div>
+    <h3 class="mb-2">Página no encontrada</h3>
+    <p class="mb-4" style="color: var(--muted); max-width: 420px;">
+        La página que buscas no existe, fue movida o la dirección tiene un error.
+    </p>
+    <a href="{% url 'dashboard' %}" class="btn-gradient">Volver al inicio</a>
+</div>
+
+{% endblock %}

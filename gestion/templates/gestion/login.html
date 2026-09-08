@@ -1,0 +1,58 @@
+{% extends "gestion/base.html" %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+
+<!-- row y justify-content-center centran la tarjeta horizontalmente en la pantalla -->
+<div class="row justify-content-center mt-5">
+
+    <!-- col-md-5 hace que la tarjeta no ocupe todo el ancho, solo una parte, para que se vea más ordenada -->
+    <div class="col-md-5">
+
+        <!-- shadow-sm le da una sombra suave a la tarjeta, para que se vea con más profundidad -->
+        <div class="card-glass">
+            <div class="card-body p-4">
+
+                <!-- text-center centra el título dentro de la tarjeta -->
+                <h3 class="text-center mb-4">Iniciar sesión</h3>
+
+                <!-- method="post" porque estamos enviando datos (usuario y contraseña) -->
+                <form method="post">
+                    <!-- csrf_token es obligatorio en todo formulario POST de Django, protege contra ataques CSRF -->
+                    {% csrf_token %}
+
+                    <!-- recorro cada campo del formulario uno por uno, en vez de usar form.as_p -->
+                    <!-- esto me permite darle clases de Bootstrap a cada campo, form.as_p no lo permite -->
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <!-- muestro la etiqueta del campo, por ejemplo "Usuario" o "Contraseña" -->
+                            <label class="form-label">{{ field.label }}</label>
+
+                            <!-- agrego la clase form-control para que el campo se vea con el estilo de Bootstrap -->
+                            {{ field|add_class:"form-control" }}
+
+                            <!-- si el campo tiene un error de validación, lo muestro en rojo -->
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <!-- d-grid hace que el botón ocupe todo el ancho disponible -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn-gradient">Ingresar</button>
+                    </div>
+                </form>
+
+                <!-- enlace por si el usuario no tiene cuenta todavía -->
+                <p class="text-center mt-3 mb-0">
+                    ¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

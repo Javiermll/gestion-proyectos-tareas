@@ -1,0 +1,46 @@
+{% extends "gestion/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card-glass">
+            <div class="card-body p-4">
+
+                <!-- mismo truco que en proyecto_form: si object.pk existe, estoy editando -->
+                {% if object.pk %}
+                    <h3 class="mb-4">Editar tarea</h3>
+                {% else %}
+                    <h3 class="mb-4">Nueva tarea</h3>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+
+                            <!-- estado, prioridad y proyecto son campos de selección (select), no cuadros de texto -->
+                            <!-- add_class igual les aplica el estilo de Bootstrap, sin importar el tipo de campo -->
+                            {{ field|add_class:"form-control" }}
+
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn-gradient">Guardar</button>
+                        <a href="{% url 'tarea_list' %}" class="btn-soft">Cancelar</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "gestion/base.html" %}
+
+{% block content %}
+
+<!-- Django busca este archivo automáticamente cuando DEBUG=False y ocurre un error inesperado del servidor -->
+<!-- ojo: a diferencia de 404.html, Django renderiza esta plantilla SIN el request (sin usuario, sin contexto),
+     así que la navbar de base.html siempre se ve como si nadie hubiera iniciado sesión acá -->
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 55vh;">
+    <div class="error-code mb-2">500</div>
+    <h3 class="mb-2">Algo salió mal</h3>
+    <p class="mb-4" style="color: var(--muted); max-width: 420px;">
+        Ocurrió un error inesperado de nuestro lado. Ya quedó registrado; intenta de nuevo en unos minutos.
+    </p>
+    <a href="{% url 'dashboard' %}" class="btn-gradient">Volver al inicio</a>
+</div>
+
+{% endblock %}

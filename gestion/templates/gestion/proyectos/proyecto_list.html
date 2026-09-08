@@ -1,0 +1,80 @@
+{% extends "gestion/base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="section-label">Mis proyectos</span>
+
+    <!-- Boton para crear un proyecto nuevo -->
+    <a href="{% url 'proyecto_create' %}" class="btn-gradient">+ Nuevo proyecto</a>
+</div>
+
+<!-- reviso si la lista de proyectos viene vacía, para mostrar un mensaje en vez de una tabla vacía -->
+{% if proyectos %}
+
+    <!-- row y g-4 crean una grilla de tarjetas con espacio entre ellas -->
+    <div class="row g-4">
+
+        <!-- recorro cada proyecto que me pasó la vista (context_object_name = 'proyectos') -->
+        {% for proyecto in proyectos %}
+
+            <!-- col-md-4 hace que entren 3 tarjetas por fila en pantallas medianas -->
+            <div class="col-md-4">
+                <div class="card-glass h-100">
+                    <div class="card-body d-flex flex-column p-4">
+
+                        <div class="d-flex align-items-start justify-content-between mb-2">
+                            <h5 class="card-title mb-0">{{ proyecto.nombre }}</h5>
+                            <!-- cuento las tareas asociadas a este proyecto -->
+                            <span class="badge-grad badge-grad-count text-nowrap ms-2">
+                                {{ proyecto.tareas.count }} tarea{{ proyecto.tareas.count|pluralize }}
+                            </span>
+                        </div>
+
+                        <!-- truncatewords corta la descripción si es muy larga -->
+                        <p class="card-text mb-2" style="color: var(--muted);">{{ proyecto.descripcion|truncatewords:15 }}</p>
+
+                        <!-- fecha, como dato secundario -->
+                        <p class="small mb-3" style="color: var(--muted-2);">
+                            Creado el {{ proyecto.creado_en|date:"d/m/Y" }}
+                        </p>
+
+                        <!-- mt-auto empuja estos botones hacia abajo, para que todas las tarjetas queden parejas -->
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="{% url 'proyecto_update' proyecto.pk %}" class="btn-soft btn-sm">Editar</a>
+                            <a href="{% url 'proyecto_delete' proyecto.pk %}" class="btn-soft-danger btn-sm">Eliminar</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+
+    <!-- controles de paginación: solo se muestran si hay más de una página -->
+    {% if is_paginated %}
+        <nav class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn-soft btn-sm">&larr; Anterior</a>
+                {% endif %}
+            </div>
+            <span class="small" style="color: var(--muted-2);">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            <div>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn-soft btn-sm">Siguiente &rarr;</a>
+                {% endif %}
+            </div>
+        </nav>
+    {% endif %}
+
+{% else %}
+
+    <div class="alert-glass p-4">
+        Todavía no tienes proyectos creados. ¡Crea el primero con el botón de arriba!
+    </div>
+
+{% endif %}
+
+{% endblock %}

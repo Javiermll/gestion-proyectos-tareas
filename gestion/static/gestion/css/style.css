@@ -1,0 +1,336 @@
+/* ============================================================
+   Gestión de Proyectos y Tareas — Sistema visual "SaaS moderno"
+   Paleta: violeta -> azul (gradiente), fondo claro con radiales suaves,
+   tarjetas "glass" con blur, tipografía Sora (títulos) + Work Sans (texto).
+   ============================================================ */
+
+:root {
+  --accent-1: #8b5cf6;
+  --accent-2: #3b82f6;
+  --text: #241f3d;
+  --muted: #5b5470;
+  --muted-2: #8b83a0;
+  --border-glass: #ece8f7;
+}
+
+body {
+  font-family: 'Work Sans', system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1100px 500px at 10% -10%, #ede4ff 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, #e2f0ff 0%, transparent 55%),
+    #f7f5fc;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+  font-family: 'Sora', system-ui, sans-serif;
+}
+
+a {
+  color: var(--accent-1);
+}
+a:hover {
+  color: #6d28d9;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar-glass {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.navbar-brand-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-decoration: none;
+}
+.navbar-brand-text:hover {
+  color: var(--text);
+}
+
+.nav-pill-group {
+  display: flex;
+  gap: 6px;
+  background: #ffffffb0;
+  padding: 5px;
+  border-radius: 100px;
+  backdrop-filter: blur(6px);
+}
+
+.nav-pill {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 8px 18px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all .15s ease;
+}
+.nav-pill:hover {
+  color: var(--text);
+}
+.nav-pill.active {
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-1), #6366f1);
+  box-shadow: 0 6px 16px -6px rgba(124, 58, 237, .5);
+}
+
+.avatar-gradient {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .72rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, .35);
+  flex-shrink: 0;
+}
+
+/* ---------- Botones ---------- */
+
+.btn-gradient {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 100px;
+  padding: .6rem 1.3rem;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -8px rgba(124, 58, 237, .5);
+  transition: all .15s ease;
+}
+.btn-gradient:hover {
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -8px rgba(124, 58, 237, .6);
+}
+
+.btn-soft {
+  display: inline-block;
+  background: #fff;
+  border: 1px solid var(--border-glass);
+  color: var(--text);
+  font-weight: 600;
+  border-radius: 100px;
+  padding: .6rem 1.3rem;
+  text-decoration: none;
+  transition: all .15s ease;
+}
+.btn-soft:hover {
+  color: var(--text);
+  text-decoration: none;
+  border-color: #d9d2f0;
+}
+
+.btn-soft-danger {
+  display: inline-block;
+  background: #fff;
+  border: 1px solid #fbdce8;
+  color: #e0447a;
+  font-weight: 600;
+  border-radius: 100px;
+  padding: .6rem 1.3rem;
+  text-decoration: none;
+  transition: all .15s ease;
+}
+.btn-soft-danger:hover {
+  color: #c02f65;
+  text-decoration: none;
+  border-color: #f5c3d6;
+}
+
+/* ---------- Tarjetas "glass" ---------- */
+
+.card-glass {
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border: 1px solid #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px -18px rgba(124, 58, 237, .25);
+}
+
+.card-glass-danger {
+  background: #fffafccc;
+  backdrop-filter: blur(10px);
+  border: 1px solid #ffd9df;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px -18px rgba(239, 68, 68, .25);
+}
+
+/* ---------- Badges de estado / prioridad ---------- */
+
+.badge-grad {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 700;
+  border-radius: 100px;
+  padding: .35rem .75rem;
+}
+.badge-grad-slate {
+  background: #eceaf5;
+  color: var(--muted);
+}
+.badge-grad-indigo {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #fff;
+}
+.badge-grad-green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+}
+.badge-grad-light {
+  background: #f4f1fb;
+  color: var(--muted);
+  border: 1px solid var(--border-glass);
+}
+.badge-grad-amber {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: var(--text);
+}
+.badge-grad-pink {
+  background: linear-gradient(135deg, #f472b6, #ef4444);
+  color: #fff;
+}
+.badge-grad-count {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+}
+
+/* ---------- Tabla "glass" ---------- */
+
+.table-glass-wrap {
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border: 1px solid #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -18px rgba(59, 130, 246, .2);
+}
+.table-glass-wrap table {
+  margin-bottom: 0;
+}
+.table-glass-wrap thead th {
+  background: #f4f1fb;
+  color: var(--muted-2);
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  border: none;
+  padding: .85rem 1.2rem;
+}
+.table-glass-wrap tbody td {
+  padding: 1rem 1.2rem;
+  border-top: 1px solid #f0eef8;
+  vertical-align: middle;
+}
+.table-glass-wrap tbody tr:hover {
+  background: #faf9ff;
+}
+
+/* ---------- Formularios ---------- */
+
+.form-control,
+.form-select {
+  border-radius: 12px;
+  border: 1px solid var(--border-glass);
+  padding: .65rem .9rem;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .15);
+}
+
+/* ---------- Dashboard: tarjetas de estadísticas ---------- */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+}
+.stat-tile {
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border: 1px solid #fff;
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 16px 32px -18px rgba(124, 58, 237, .2);
+}
+.stat-tile-label {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--muted-2);
+  margin-bottom: 6px;
+}
+.stat-tile-value {
+  font-family: 'Sora', system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-tile-value.accent {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Páginas de error (404 / 500) ---------- */
+
+.error-code {
+  font-family: 'Sora', system-ui, sans-serif;
+  font-size: 5rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Estados vacíos / avisos ---------- */
+
+.alert-glass {
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border: 1px solid #fff;
+  border-radius: 16px;
+  color: var(--muted);
+  box-shadow: 0 16px 32px -18px rgba(124, 58, 237, .2);
+}
+.alert-glass-danger {
+  background: #fff5f5cc;
+  backdrop-filter: blur(10px);
+  border: 1px solid #ffe0e0;
+  border-radius: 16px;
+  color: #c02f3a;
+}
+
+/* ---------- Sección de etiquetas (Mis proyectos / Mis tareas) ---------- */
+
+.section-label {
+  font-family: 'Sora', system-ui, sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text);
+}

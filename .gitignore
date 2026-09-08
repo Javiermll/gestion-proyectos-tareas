@@ -1,0 +1,15 @@
+# entorno virtual, no se sube porque cada persona lo crea de nuevo con requirements.txt
+venv/
+
+# base de datos local, no se sube porque tiene datos de prueba y cada quien genera la suya
+db.sqlite3
+
+# archivos que Python genera automáticamente al ejecutar el código
+__pycache__/
+*.pyc
+
+# el archivo con la SECRET_KEY, nunca se sube al repositorio
+.env
+
+# archivos de configuración del editor, no son parte del proyecto en sí
+.vscode/

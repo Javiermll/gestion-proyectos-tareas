@@ -1,0 +1,37 @@
+{% extends "gestion/base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card-glass-danger">
+            <div class="card-body p-4">
+
+                <h3 class="mb-3">Eliminar tarea</h3>
+
+                <!-- object es la tarea que la vista DeleteView me pasó automáticamente -->
+                <p>
+                    ¿Estás seguro de que quieres eliminar la tarea
+                    <strong>{{ object.titulo }}</strong>?
+                </p>
+
+                <div class="alert-glass-danger p-3">
+                    Esta acción no se puede deshacer.
+                </div>
+
+                <!-- este formulario no tiene campos, solo confirma la eliminación con POST -->
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn-gradient" style="background: linear-gradient(135deg, #ef4444, #f472b6);">Sí, eliminar</button>
+                        <a href="{% url 'tarea_list' %}" class="btn-soft">Cancelar</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

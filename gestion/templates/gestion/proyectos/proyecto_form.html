@@ -1,0 +1,48 @@
+{% extends "gestion/base.html" %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card-glass">
+            <div class="card-body p-4">
+
+                <!-- reviso si el objeto ya existe (object.pk tiene valor) para saber si estoy editando o creando -->
+                {% if object.pk %}
+                    <h3 class="mb-4">Editar proyecto</h3>
+                {% else %}
+                    <h3 class="mb-4">Nuevo proyecto</h3>
+                {% endif %}
+
+                <!-- el formulario se envía a la misma URL que lo muestra, y la vista decide si es POST o GET -->
+                <form method="post">
+                    {% csrf_token %}  <!-- token de seguridad para evitar ataques CSRF -->
+
+                    {% for field in form %}  <!-- recorro cada campo del formulario que me pasó la vista -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label> <!-- muestro la etiqueta del campo -->
+                            {{ field|add_class:"form-control" }}    <!-- agrego la clase de Bootstrap para que se vea bonito -->
+
+                            {% if field.errors %}  <!-- si el campo tiene errores, los muestro debajo en rojo -->
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}  <!-- endif hace que se muestren los errores -->
+                        </div> 
+                    {% endfor %}
+
+                    <!-- botones de acción -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn-gradient">Guardar</button>
+
+                        <!-- botón para volver atrás sin guardar cambios -->
+                        <a href="{% url 'proyecto_list' %}" class="btn-soft">Cancelar</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
