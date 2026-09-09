@@ -1,0 +1,25 @@
+# Blueprint de Render: permite crear el servicio con "New +" -> "Blueprint" en
+# https://dashboard.render.com apuntando a este repositorio, sin configurar nada a mano.
+# Si preferís crearlo manualmente ("New +" -> "Web Service"), este archivo también
+# sirve como referencia de qué poner en cada campo del formulario.
+services:
+  - type: web
+    name: gestion-tareas
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn core.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      # Render reemplaza RENDER_EXTERNAL_HOSTNAME por el dominio real (algo.onrender.com);
+      # si más adelante agregás un dominio propio, hay que sumarlo acá también.
+      - key: ALLOWED_HOSTS
+        value: "${RENDER_EXTERNAL_HOSTNAME}"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://${RENDER_EXTERNAL_HOSTNAME}"
+      # ajustar si Render no ofrece esta versión exacta al momento de desplegar
+      - key: PYTHON_VERSION
+        value: "3.14.6"

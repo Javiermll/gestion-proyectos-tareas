@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 import os
+import dj_database_url
 from dotenv import load_dotenv
 
 # load_dotenv() busca el archivo .env en la raíz del proyecto y carga sus variables
@@ -28,10 +29,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG y ALLOWED_HOSTS ahora salen de variables de entorno: en el .env local se deja
+# DEBUG=True para desarrollo, y en la plataforma de despliegue se define DEBUG=False
+# (o simplemente no se define, ya que "False" es el valor por defecto acá).
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+# lista separada por comas, ej: "midominio.onrender.com,localhost,127.0.0.1"
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
+
+# Django exige esto aparte de ALLOWED_HOSTS para aceptar formularios POST (csrf)
+# que vienen de un dominio https detrás de un proxy, como en Render.
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()]
 
 
 # Application definition
@@ -49,6 +57,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise sirve los archivos estáticos directamente desde Django en producción
+    # (Render no tiene un servidor de archivos estáticos aparte, como sí tendría Nginx).
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,11 +91,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+# si existe la variable de entorno DATABASE_URL (por ejemplo, un Postgres en Render o Neon),
+# se usa esa; si no está definida, sigue usando el mismo SQLite local de siempre.
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+    )
 }
 
 
@@ -123,6 +136,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# carpeta donde "collectstatic" junta todos los estáticos para producción
+# (en desarrollo con DEBUG=True, Django los sigue sirviendo directo desde gestion/static/)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# storage de WhiteNoise: le agrega un hash al nombre de cada archivo y los comprime,
+# para que el navegador pueda cachearlos de forma segura entre despliegues.
+# 'default' se deja en el storage normal de Django (no se usa en este proyecto,
+# no hay FileField/ImageField, pero Django exige declararlo si se personaliza STORAGES).
+# Ojo: el storage de WhiteNoise exige haber corrido "collectstatic" antes (genera un
+# manifiesto con el hash de cada archivo), así que solo se activa cuando DEBUG=False;
+# en desarrollo se sigue usando el storage normal de Django, sin ese paso extra.
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': (
+            'django.contrib.staticfiles.storage.StaticFilesStorage'
+            if DEBUG else
+            'whitenoise.storage.CompressedManifestStaticFilesStorage'
+        ),
+    },
+}
 
 
 # Email

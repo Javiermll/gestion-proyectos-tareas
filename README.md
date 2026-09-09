@@ -8,18 +8,19 @@ Aplicación web desarrollada en Django que permite a los usuarios registrarse, a
 
 ## 📦 Repositorio
 
-Ver repositorio en GitHub: `<url-del-repositorio>`
+Ver repositorio en GitHub: [github.com/Javiermll/django-gestion-proyectos-tareas](https://github.com/Javiermll/django-gestion-proyectos-tareas)
 
-> Una vez desplegado en Vercel, el enlace a la versión en vivo se agregará en esta sección.
+> El enlace a la versión en vivo (desplegada en Render) se agregará en esta sección.
 
 ## 🛠️ Stack Tecnológico
 
 - Python 3.10+
-- Django 5.2
-- SQLite (base de datos de desarrollo)
+- Django 6.1
+- SQLite en desarrollo (o Postgres en producción, vía `DATABASE_URL`)
 - Bootstrap 5 (vía CDN) + hoja de estilos propia (sistema visual "SaaS moderno")
 - django-widget-tweaks (estilos en formularios generados por Django)
 - python-dotenv (variables de entorno)
+- gunicorn + whitenoise + dj-database-url (servidor y estáticos en producción)
 
 ## 🎯 Alcance del proyecto
 
@@ -33,7 +34,7 @@ Requisitos de la consigna cubiertos:
 - ✅ Pruebas unitarias para modelos y vistas principales
 - ✅ Documentación en README con instalación y uso
 
-Sobre lo mínimo pedido, se sumaron por decisión propia: dashboard/resumen inicial, paginación en los listados, páginas de error personalizadas (404/500), y un sistema visual propio sobre Bootstrap (ver [MEJORAS_DISENO.md](MEJORAS_DISENO.md)).
+Sobre lo mínimo pedido, se sumaron por decisión propia: dashboard/resumen inicial, paginación en los listados, páginas de error personalizadas (404/500), un sistema visual propio sobre Bootstrap, y configuración lista para desplegar en producción (Render).
 
 ## 🗂️ Estructura del proyecto
 
@@ -74,8 +75,9 @@ Proy_django_gestion_tareas/
 ├── .env                        # Variables de entorno (no se sube al repositorio)
 ├── .gitignore
 ├── manage.py
-├── README.md
-└── MEJORAS_DISENO.md           # Historial detallado de mejoras de diseño
+├── requirements.txt            # Dependencias, incluidas las de producción
+├── render.yaml                 # Blueprint de despliegue en Render
+└── README.md
 ```
 
 ## ✨ Funcionalidades
@@ -117,8 +119,9 @@ Resumen del proceso de armado del proyecto, paso a paso:
 7. **Templates.** Se armó `base.html` con herencia de plantillas, y los templates de cada vista sobre Bootstrap 5.
 8. **Seguridad.** Se revisó CSRF, aislamiento de datos, `SECRET_KEY` en variable de entorno y `.gitignore`.
 9. **Pruebas unitarias.** Se escribieron 12 tests cubriendo modelos, seguridad de acceso y aislamiento entre usuarios.
-10. **Mejoras de diseño.** Se incorporó un dashboard, paginación, páginas de error personalizadas y un sistema visual propio sobre Bootstrap (detalle completo en [MEJORAS_DISENO.md](MEJORAS_DISENO.md)).
-11. **Documentación final.** Se compiló todo el proceso en este README.
+10. **Mejoras de diseño.** Se incorporó un dashboard, paginación, páginas de error personalizadas y un sistema visual propio sobre Bootstrap.
+11. **Preparación para producción.** Se agregó `requirements.txt`, `gunicorn` y `whitenoise`, y `settings.py` pasó a leer `DEBUG`, `ALLOWED_HOSTS` y `DATABASE_URL` desde variables de entorno, listo para desplegar en Render.
+12. **Documentación final.** Se compiló todo el proceso en este README.
 
 ## ▶️ Cómo ejecutar
 
@@ -130,13 +133,14 @@ python -m venv venv
 venv\Scripts\activate        # En Windows
 # source venv/bin/activate   # En macOS/Linux
 
-pip install django python-dotenv django-widget-tweaks
+pip install -r requirements.txt
 ```
 
 Crear un archivo `.env` en la raíz con:
 
 ```
 SECRET_KEY=tu-clave-secreta-aqui
+DEBUG=True
 ```
 
 Aplicar migraciones, crear un superusuario y levantar el servidor:
@@ -159,8 +163,7 @@ Abrir en el navegador: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 - `SECRET_KEY` gestionada por variable de entorno, fuera del control de versiones.
 - Validadores de contraseña por defecto de Django (`AUTH_PASSWORD_VALIDATORS`) activos.
 - Páginas de error personalizadas (404/500), visibles cuando `DEBUG=False` (producción).
-
-> `DEBUG = True` se mantiene durante el desarrollo para facilitar la depuración. En producción real, debe pasar a `False`.
+- `DEBUG`, `ALLOWED_HOSTS` y `CSRF_TRUSTED_ORIGINS` se controlan por variable de entorno; en producción `DEBUG` queda en `False` por defecto (no hace falta declararlo).
 
 ## 🧪 Pruebas unitarias
 
@@ -177,3 +180,20 @@ Abrir en el navegador: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 ```bash
 python manage.py test
 ```
+
+## 🚀 Despliegue en Render
+
+El proyecto está listo para desplegarse en [Render](https://render.com) (plan gratuito):
+
+1. Crear una cuenta en Render y conectarla con GitHub.
+2. **New +** → **Blueprint**, elegir este repositorio (Render detecta `render.yaml` y preconfigura todo), o **New +** → **Web Service** y completar a mano:
+   - **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`
+   - **Start Command:** `gunicorn core.wsgi:application`
+3. Variables de entorno a definir en Render (el Blueprint ya las deja armadas):
+   - `SECRET_KEY`: generarla nueva, distinta a la de desarrollo.
+   - `DEBUG`: `False`
+   - `ALLOWED_HOSTS`: el dominio que asigna Render (ej. `gestion-tareas.onrender.com`)
+   - `CSRF_TRUSTED_ORIGINS`: `https://` + ese mismo dominio
+4. Con SQLite (por defecto) los datos se pierden cada vez que la instancia gratuita se reinicia por inactividad. Para persistencia real, crear una base Postgres (en Render o en [Neon](https://neon.tech), gratis) y agregar la variable `DATABASE_URL` — `settings.py` la detecta sola, sin tocar código.
+
+> ⚠️ No se recomienda Vercel para este proyecto: es una plataforma serverless sin filesystem persistente, y esta app usa SQLite además de escrituras normales a base de datos (crear/editar proyectos y tareas), algo que no funciona de forma confiable en ese modelo.

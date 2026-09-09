@@ -13,3 +13,6 @@ __pycache__/
 
 # archivos de configuración del editor, no son parte del proyecto en sí
 .vscode/
+
+# carpeta generada por "collectstatic" en cada build de producción (Render la crea sola)
+staticfiles/
