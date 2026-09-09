@@ -10,7 +10,7 @@ Aplicación web desarrollada en Django que permite a los usuarios registrarse, a
 
 Ver repositorio en GitHub: [github.com/Javiermll/django-gestion-proyectos-tareas](https://github.com/Javiermll/django-gestion-proyectos-tareas)
 
-> El enlace a la versión en vivo (desplegada en Render) se agregará en esta sección.
+🔗 **Versión en vivo:** [gestion-tareas-5j0r.onrender.com](https://gestion-tareas-5j0r.onrender.com)
 
 ## 🛠️ Stack Tecnológico
 
@@ -181,19 +181,19 @@ Abrir en el navegador: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 python manage.py test
 ```
 
-## 🚀 Despliegue en Render
+## 🚀 Despliegue
 
-El proyecto está listo para desplegarse en [Render](https://render.com) (plan gratuito):
+El proyecto está desplegado en [Render](https://render.com) (plan gratuito) con base de datos [Postgres en Neon](https://neon.tech) (plan gratuito, sin expiración) — enlace arriba, en **📦 Repositorio**.
 
-1. Crear una cuenta en Render y conectarla con GitHub.
-2. **New +** → **Blueprint**, elegir este repositorio (Render detecta `render.yaml` y preconfigura todo), o **New +** → **Web Service** y completar a mano:
-   - **Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`
-   - **Start Command:** `gunicorn core.wsgi:application`
-3. Variables de entorno a definir en Render (el Blueprint ya las deja armadas):
-   - `SECRET_KEY`: generarla nueva, distinta a la de desarrollo.
+**Cómo está configurado**, por si hace falta recrearlo:
+
+1. En Render, **New +** → **Blueprint** apuntando a este repositorio (detecta `render.yaml` y preconfigura build/start command).
+2. Variables de entorno del servicio web:
+   - `SECRET_KEY`: generada automáticamente por Render.
    - `DEBUG`: `False`
-   - `ALLOWED_HOSTS`: el dominio que asigna Render (ej. `gestion-tareas.onrender.com`)
-   - `CSRF_TRUSTED_ORIGINS`: `https://` + ese mismo dominio
-4. Con SQLite (por defecto) los datos se pierden cada vez que la instancia gratuita se reinicia por inactividad. Para persistencia real, crear una base Postgres (en Render o en [Neon](https://neon.tech), gratis) y agregar la variable `DATABASE_URL` — `settings.py` la detecta sola, sin tocar código.
+   - `ALLOWED_HOSTS`: `.onrender.com` (comodín de subdominio; Render no expande variables como `${RENDER_EXTERNAL_HOSTNAME}` dentro de `render.yaml`, así que se usa un comodín en vez de intentar referenciar el hostname exacto)
+   - `CSRF_TRUSTED_ORIGINS`: `https://*.onrender.com`
+   - `DATABASE_URL`: connection string de un proyecto de Neon (Postgres). Sin esta variable, `settings.py` cae de vuelta a SQLite local — útil solo para pruebas rápidas, ya que esos datos no persisten entre reinicios de la instancia gratuita.
+3. Cada push a `main` redespliega solo y vuelve a correr `migrate` contra la base de Neon.
 
-> ⚠️ No se recomienda Vercel para este proyecto: es una plataforma serverless sin filesystem persistente, y esta app usa SQLite además de escrituras normales a base de datos (crear/editar proyectos y tareas), algo que no funciona de forma confiable en ese modelo.
+> ⚠️ No se recomienda Vercel para este proyecto: es una plataforma serverless sin filesystem persistente, y esta app hace escrituras normales a base de datos (crear/editar proyectos y tareas), algo que no funciona de forma confiable en ese modelo.
