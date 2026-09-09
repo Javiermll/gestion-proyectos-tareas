@@ -14,12 +14,13 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-      # Render reemplaza RENDER_EXTERNAL_HOSTNAME por el dominio real (algo.onrender.com);
-      # si más adelante agregás un dominio propio, hay que sumarlo acá también.
+      # Render NO expande variables dentro de "value" (no es un shell), así que en vez de
+      # tratar de referenciar el hostname real, se usa un comodín que cubre cualquier
+      # subdominio de onrender.com. Si más adelante agregás un dominio propio, sumarlo acá.
       - key: ALLOWED_HOSTS
-        value: "${RENDER_EXTERNAL_HOSTNAME}"
+        value: ".onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://${RENDER_EXTERNAL_HOSTNAME}"
+        value: "https://*.onrender.com"
       # ajustar si Render no ofrece esta versión exacta al momento de desplegar
       - key: PYTHON_VERSION
         value: "3.14.6"
