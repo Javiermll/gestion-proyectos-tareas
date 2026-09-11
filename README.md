@@ -8,7 +8,7 @@ Aplicación web desarrollada en Django que permite a los usuarios registrarse, a
 
 ## 📦 Repositorio
 
-Ver repositorio en GitHub: [github.com/Javiermll/django-gestion-proyectos-tareas](https://github.com/Javiermll/django-gestion-proyectos-tareas)
+Ver repositorio en GitHub: [github.com/Javiermll/gestion-proyectos-tareas](https://github.com/Javiermll/gestion-proyectos-tareas)
 
 🔗 **Versión en vivo:** [gestion-tareas-5j0r.onrender.com](https://gestion-tareas-5j0r.onrender.com)
 
